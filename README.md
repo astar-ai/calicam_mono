@@ -4,6 +4,8 @@
   <img src="http://astar.support/dotai/calicam_mono.png">
 </p>
 
+Currently, calicam_mono supports four rectification modes: perspective, cylindrical, undistorted fisheye, and longitude-and-latitude.
+
 For more information see
 [https://astar.ai](https://astar.ai).
 
@@ -38,7 +40,7 @@ Each CaliCam Mono camera has a **UNIQUE** parameter file. Please download the co
 #### 6.1 'Raw Image' window
 There are 3 trackbars to adjust the vertical **FoV**, **width**, and **height** for the output image. **FoV** is only for the perspective image.
 
-#### 6.2 'Disparity Image' window
+#### 6.2 'Rectified Image' window
 Press number button 1~4 to switch the transformation mode.
 
 	1: perspective mode
