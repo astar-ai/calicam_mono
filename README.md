@@ -21,13 +21,13 @@ Follow the steps in [CaliCam@GitHub](https://github.com/astar-ai/calicam).
 ### 3. Compile
 
 	git clone https://github.com/astar-ai/calicam_mono.git
-	cd calicam
+	cd calicam_mono
 	chmod 777 ./compile.sh
 	./compile.sh
 
 ### 4. Run
 
-	./calicam
+	./calicam_mono
 
 ### 5. Calibration Parameter File
 To run CaliCam in the **LIVE** mode, you need to download the calibration parameter file from online.
