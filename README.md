@@ -1,4 +1,4 @@
-# CaliCam Mono: Switching Between Various Transformation Modes
+# CaliCam Mono: Switching Between Perspective, Cylindrical, Undistorted Fisheye, Longitude-Latitude Modes
 
 <p align="center">
   <img src="http://astar.support/dotai/calicam_mono.png">
@@ -39,11 +39,12 @@ Each CaliCam Mono camera has a **UNIQUE** parameter file. Please download the co
 There are 3 trackbars to adjust the vertical **FoV**, **width**, and **height** for the output image. **FoV** is only for the perspective image.
 
 #### 6.2 'Disparity Image' window
-Press button number 1-4 to switch the transformation mode.
-1: perspective mode
-2: cylindrical mode
-3: undistorted fisheye mode
-4: longitude-latitude mode
+Press number button 1~4 to switch the transformation mode.
+
+	1: perspective mode
+	2: cylindrical mode
+	3: undistorted fisheye mode
+	4: longitude-latitude mode
 
 #### 6.3 Exit
 Press 'q' or 'Esc' key to exit.
