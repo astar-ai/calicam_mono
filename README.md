@@ -1,4 +1,4 @@
-# CaliCam Mono: Switching Between Perspective, Cylindrical, Undistorted Fisheye, Longitude-Latitude Modes
+# CaliCam Mono: Switching Between Perspective, Cylindrical, Undistorted Fisheye, and Longitude-Latitude Modes
 
 <p align="center">
   <img src="http://astar.support/dotai/calicam_mono.png">
