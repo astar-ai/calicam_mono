@@ -4,7 +4,7 @@
   <img src="http://astar.support/dotai/calicam_mono.png">
 </p>
 
-Currently, calicam_mono supports four rectification modes: perspective, cylindrical, undistorted fisheye, and longitude-and-latitude.
+CaliCam_Mono currently supports four rectification modes, these are the perspective, cylindrical, undistorted fisheye and longitude-and-latitude, respectively.
 
 For more information see
 [https://astar.ai](https://astar.ai).
