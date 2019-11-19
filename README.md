@@ -1,4 +1,4 @@
-# CaliCam Mono: Various Fisheye Rectification Modes
+# CaliCam_Mono: Various Fisheye Rectification Modes
 
 <p align="center">
   <img src="http://astar.support/dotai/calicam_mono.png">
