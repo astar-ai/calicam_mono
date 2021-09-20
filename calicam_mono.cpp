@@ -291,7 +291,7 @@ void InitRectifyMap() {
 ////////////////////////////////////////////////////////////////////////////////
 
 int main(int argc, char** argv) {
-  std::string file_name = argc == 2 ? argv[1] : "./astar_calicam.yml";
+  std::string file_name = argc == 2 ? argv[1] : "../astar_calicam.yml";
   LoadParameters(file_name);
   InitRectifyMap();
 
@@ -309,7 +309,7 @@ int main(int argc, char** argv) {
     vcapture.set(CV_CAP_PROP_FRAME_HEIGHT, cap_rows);
     vcapture.set(CV_CAP_PROP_FPS, 30);
   } else {
-    raw_img = cv::imread("dasl_wood_shop.jpg", cv::IMREAD_COLOR);
+    raw_img = cv::imread("../dasl_wood_shop.jpg", cv::IMREAD_COLOR);
   }
 
   char win_name[256];

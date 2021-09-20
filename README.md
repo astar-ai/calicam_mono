@@ -16,16 +16,15 @@ The following steps have been tested and passed on Ubuntu **16.04.5**.
 Fisheye Camera Model:
 C. Mei and P. Rives, Single View Point Omnidirectional Camera Calibration From Planar Grids, ICRA 2007.
 
-### 2. OpenCV Installation
+### 2. OpenCV Dependencies
 
-Follow the steps in [CaliCam@GitHub](https://github.com/astar-ai/calicam).
+Required at leat 3.0. Tested with OpenCV 3.4.0.
 
 ### 3. Compile
 
-	git clone https://github.com/astar-ai/calicam_mono.git
-	cd calicam_mono
-	chmod 777 ./compile.sh
-	./compile.sh
+	mkdir build && cd build
+	cmake ..
+	make
 
 ### 4. Run
 
@@ -58,5 +57,4 @@ To run CaliCam in a live mode, please change the variable live to true:
 
 and run
 
-	./calicam YOUR_CALIBRATION_FILE.yml
-
+	./calicam_mono YOUR_CALIBRATION_FILE.yml
