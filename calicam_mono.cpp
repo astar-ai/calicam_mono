@@ -34,14 +34,16 @@ RectMode mode = RECT_PERSPECTIVE;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void OnTrackAngle(int, void*) {
+void OnTrackAngle(int value, void*) {
+  vfov_bar = value;
   vfov_now = 60 + vfov_bar;
   changed = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void OnTrackWidth(int, void*) {
+void OnTrackWidth(int value, void*) {
+  width_bar = value;
   width_now = 480 + width_bar;
   if (width_now % 2 == 1)
     width_now--;
@@ -50,7 +52,8 @@ void OnTrackWidth(int, void*) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void OnTrackHeight(int, void*) {
+void OnTrackHeight(int value, void*) {
+  height_bar = value;
   height_now = 360 + height_bar;
   if (height_now % 2 == 1)
     height_now--;
@@ -267,11 +270,8 @@ int main(int argc, char** argv) {
   cv::namedWindow(param_win_name);
 
   cv::createTrackbar("V. FoV:  60    +", param_win_name, nullptr,   vfov_max,   OnTrackAngle);
-  cv::setTrackbarPos("V. FoV:  60    +", param_win_name, vfov_bar);
   cv::createTrackbar("Width:  480 +", param_win_name, nullptr,  width_max,  OnTrackWidth);
-  cv::setTrackbarPos("Width:  480 +", param_win_name, width_bar);
   cv::createTrackbar("Height: 360 +", param_win_name, nullptr, height_max, OnTrackHeight);
-  cv::setTrackbarPos("Height: 360 +", param_win_name, height_bar);
 
   cv::Mat raw_imgl, raw_imgr, rect_imgl, rect_imgr;
   while (1) {
