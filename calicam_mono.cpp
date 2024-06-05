@@ -132,15 +132,20 @@ void InitRectifyMap(cv::Mat K,
       }
 
       if (mode == RECT_FISHEYE) {
+        if (hypot(c - Knew.at<double>(0, 2), r - Knew.at<double>(1, 2))
+            > Knew.at<double>(0, 0)) {
+          map1.at<float>(r,c) = -1.f;
+          map2.at<float>(r,c) = -1.f;
+          continue;
+        }
         double ee = MatRowMul(Ki, c, r, 1., 0);
         double ff = MatRowMul(Ki, c, r, 1., 1);
 
-        double ef = ee * ee + ff * ff;
-        double zz = (xi + sqrt(1. + (1. - xi * xi) * ef)) / (ef + 1.);
+        double zz = 2. / (ee * ee + ff * ff + 1.);
 
         xc = zz * ee;
         yc = zz * ff;
-        zc = zz - xi;
+        zc = zz - 1.;
       }
 
       if (mode == RECT_LONGLAT) {
@@ -176,64 +181,6 @@ void InitRectifyMap(cv::Mat K,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-double FocalLength(cv::Mat K, cv::Mat D, double xi) {
-  double fx = K.at<double>(0,0);
-  double fy = K.at<double>(1,1);
-  double cx = K.at<double>(0,2);
-  double cy = K.at<double>(1,2);
-  double s  = K.at<double>(0,1);
-
-  double k1 = D.at<double>(0,0);
-  double k2 = D.at<double>(0,1);
-  double p1 = D.at<double>(0,2);
-  double p2 = D.at<double>(0,3);
-
-  double u = cx;
-  double v = 5.;
-  double x = (u * fy - cx * fy - s * (v - cy)) / (fx * fy);
-  double y = (v - cy) / fy;
-  double e = x;
-  double f = y;
-
-  for (int i = 0; i < 20; ++i) {
-    double r2 = e * e + f * f;
-    double r4 = r2 * r2;
-    double rr = 1. + k1 * r2 + k2 * r4;
-    e = (x - 2. * p1 * e * f - p2 * (r2 + 2 * e * e)) / rr;
-    f = (y - 2. * p2 * e * f - p1 * (r2 + 2 * f * f)) / rr;
-  }
-
-  u = cx;
-  v = cap_rows - 5.;
-  x = (u * fy - cx * fy - s * (v - cy)) / (fx * fy);
-  y = (v - cy) / fy;
-  double e0 = x;
-  double f0 = y;
-
-  for (int i = 0; i < 20; ++i) {
-    double r2 = e0 * e0 + f0 * f0;
-    double r4 = r2 * r2;
-    double rr = 1. + k1 * r2 + k2 * r4;
-    e0 = (x - 2. * p1 * e0 * f0 - p2 * (r2 + 2 * e0 * e0)) / rr;
-    f0 = (y - 2. * p2 * e0 * f0 - p1 * (r2 + 2 * f0 * f0)) / rr;
-  }
-
-  if (fabs(f) > f0) {
-    e = e0;
-    f = -f0;
-  }
-
-  double ef = e * e + f * f;
-  double zx = (xi + sqrt(1. + (1. - xi*xi) * ef)) / (ef + 1.);
-  cv::Vec3d Xc(e * zx, f * zx, zx - xi);
-  Xc /= norm(Xc);
-
-  f = Xc(1) / (Xc(2) + xi);
-  return - height_now / 2. / f;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 void InitRectifyMap() {
   double   vfov_rad, focal;
   cv::Mat  Knew;
@@ -263,12 +210,14 @@ void InitRectifyMap() {
     break;
 
   case RECT_FISHEYE:
+    img_size = cv::Size(width_now, width_now);
+
     std::cout << "\x1b[1;36m" << "Mode: " << "Fisheye" << "\x1b[0m\n";
     Knew = cv::Mat::eye(3, 3, CV_64F);
-    Knew.at<double>(0,0) = FocalLength(Kl, Dl, xil.at<double>(0,0));
+    Knew.at<double>(0,0) = width_now  / 2.;
     Knew.at<double>(0,2) = width_now  / 2. - 0.5;
-    Knew.at<double>(1,1) = Knew.at<double>(0,0);
-    Knew.at<double>(1,2) = height_now / 2. - 0.5;
+    Knew.at<double>(1,1) = width_now  / 2.;
+    Knew.at<double>(1,2) = width_now / 2. - 0.5;
     InitRectifyMap(Kl, Dl, Knew, xil.at<double>(0,0),
                    img_size, RECT_FISHEYE, fmap[0], fmap[1]);
     break;
@@ -305,9 +254,9 @@ int main(int argc, char** argv) {
       exit(-1);
     }
 
-    vcapture.set(CV_CAP_PROP_FRAME_WIDTH,  cap_cols);
-    vcapture.set(CV_CAP_PROP_FRAME_HEIGHT, cap_rows);
-    vcapture.set(CV_CAP_PROP_FPS, 30);
+    vcapture.set(cv::CAP_PROP_FRAME_WIDTH,  cap_cols);
+    vcapture.set(cv::CAP_PROP_FRAME_HEIGHT, cap_rows);
+    vcapture.set(cv::CAP_PROP_FPS, 30);
   } else {
     raw_img = cv::imread("../dasl_wood_shop_mono.jpg", cv::IMREAD_COLOR);
   }
@@ -317,12 +266,12 @@ int main(int argc, char** argv) {
   std::string param_win_name(win_name);
   cv::namedWindow(param_win_name);
 
-  cv::createTrackbar("V. FoV:  60    +", param_win_name,
-                     &vfov_bar,   vfov_max,   OnTrackAngle);
-  cv::createTrackbar("Width:  480 +", param_win_name,
-                     &width_bar,  width_max,  OnTrackWidth);
-  cv::createTrackbar("Height: 360 +", param_win_name,
-                     &height_bar, height_max, OnTrackHeight);
+  cv::createTrackbar("V. FoV:  60    +", param_win_name, nullptr,   vfov_max,   OnTrackAngle);
+  cv::setTrackbarPos("V. FoV:  60    +", param_win_name, vfov_bar);
+  cv::createTrackbar("Width:  480 +", param_win_name, nullptr,  width_max,  OnTrackWidth);
+  cv::setTrackbarPos("Width:  480 +", param_win_name, width_bar);
+  cv::createTrackbar("Height: 360 +", param_win_name, nullptr, height_max, OnTrackHeight);
+  cv::setTrackbarPos("Height: 360 +", param_win_name, height_bar);
 
   cv::Mat raw_imgl, raw_imgr, rect_imgl, rect_imgr;
   while (1) {
@@ -381,6 +330,3 @@ int main(int argc, char** argv) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
-
-
