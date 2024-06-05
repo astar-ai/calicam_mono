@@ -9,7 +9,7 @@ CaliCam_Mono currently supports four rectification modes, these are the perspect
 For more information see
 [https://astar.ai](https://astar.ai).
 
-The following steps have been tested and passed on Ubuntu **16.04.5**.
+The following steps have been tested and passed on Ubuntu **22.04**.
 
 ### 1. Theoretical Background
 
@@ -18,7 +18,7 @@ C. Mei and P. Rives, Single View Point Omnidirectional Camera Calibration From P
 
 ### 2. OpenCV Dependencies
 
-Required at leat 3.0. Tested with OpenCV 3.4.0.
+Required at leat 4.0. Tested with OpenCV 4.5.5.
 
 ### 3. Run C++ Code
 #### Compile
