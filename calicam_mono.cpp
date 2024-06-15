@@ -13,9 +13,9 @@ bool      live = false;
 //bool      live = true;
 //To run live mode, you need a CaliCam from www.astar.ai
 
-int       vfov_bar =  0, width_bar =   0, height_bar =   0;
-int       vfov_max = 60, width_max = 480, height_max = 360;
-int       vfov_now = 60, width_now = 480, height_now = 360;
+int       vfov_bar =  0, size_bar =   0;
+int       vfov_max = 60, size_max = 480;
+int       vfov_now = 60, size_now = 480;
 
 int       cap_cols, cap_rows;
 bool      changed = false;
@@ -42,21 +42,11 @@ void OnTrackAngle(int value, void*) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void OnTrackWidth(int value, void*) {
-  width_bar = value;
-  width_now = 480 + width_bar;
-  if (width_now % 2 == 1)
-    width_now--;
-  changed = true;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void OnTrackHeight(int value, void*) {
-  height_bar = value;
-  height_now = 360 + height_bar;
-  if (height_now % 2 == 1)
-    height_now--;
+void OnTrackSize(int value, void*) {
+  size_bar = value;
+  size_now = 480 + size_bar;
+  if (size_now % 2 == 1)
+    size_now--;
   changed = true;
 }
 
@@ -187,15 +177,15 @@ void InitRectifyMap(cv::Mat K,
 void InitRectifyMap() {
   double   vfov_rad, focal;
   cv::Mat  Knew;
-  cv::Size img_size(width_now, height_now);
+  cv::Size img_size(size_now, size_now);
 
   switch (mode) {
   case RECT_PERSPECTIVE:
     std::cout << "\x1b[1;36m" << "Mode: " << "Perspective" << "\x1b[0m\n";
     vfov_rad = vfov_now * CV_PI / 180.;
-    focal = height_now / 2. / tan(vfov_rad / 2.);
-    Knew = (cv::Mat_<double>(3, 3) << focal, 0., width_now  / 2. - 0.5,
-                                      0., focal, height_now / 2. - 0.5,
+    focal = size_now / 2. / tan(vfov_rad / 2.);
+    Knew = (cv::Mat_<double>(3, 3) << focal, 0., size_now  / 2. - 0.5,
+                                      0., focal, size_now / 2. - 0.5,
                                       0., 0., 1.);
     InitRectifyMap(Kl, Dl, Knew, xil.at<double>(0,0),
                    img_size, RECT_PERSPECTIVE, fmap[0], fmap[1]);
@@ -206,21 +196,21 @@ void InitRectifyMap() {
   case RECT_CYLINDRICAL:
     std::cout << "\x1b[1;36m" << "Mode: " << "Cylindrical" << "\x1b[0m\n";
     Knew = cv::Mat::eye(3, 3, CV_64F);
-    Knew.at<double>(0,0) = width_now  /  CV_PI;
-    Knew.at<double>(1,1) = height_now / (CV_PI - 2 * MARGIN);
+    Knew.at<double>(0,0) = size_now  /  CV_PI;
+    Knew.at<double>(1,1) = size_now / (CV_PI - 2 * MARGIN);
     InitRectifyMap(Kl, Dl, Knew, xil.at<double>(0,0),
                    img_size, RECT_CYLINDRICAL, fmap[0], fmap[1]);
     break;
 
   case RECT_FISHEYE:
-    img_size = cv::Size(width_now, width_now);
+    img_size = cv::Size(size_now, size_now);
 
     std::cout << "\x1b[1;36m" << "Mode: " << "Fisheye" << "\x1b[0m\n";
     Knew = cv::Mat::eye(3, 3, CV_64F);
-    Knew.at<double>(0,0) = width_now  / 2.;
-    Knew.at<double>(0,2) = width_now  / 2. - 0.5;
-    Knew.at<double>(1,1) = width_now  / 2.;
-    Knew.at<double>(1,2) = width_now / 2. - 0.5;
+    Knew.at<double>(0,0) = size_now  / 2.;
+    Knew.at<double>(0,2) = size_now  / 2. - 0.5;
+    Knew.at<double>(1,1) = size_now  / 2.;
+    Knew.at<double>(1,2) = size_now / 2. - 0.5;
     InitRectifyMap(Kl, Dl, Knew, xil.at<double>(0,0),
                    img_size, RECT_FISHEYE, fmap[0], fmap[1]);
     break;
@@ -228,23 +218,32 @@ void InitRectifyMap() {
   case RECT_LONGLAT:
     std::cout << "\x1b[1;36m" << "Mode: " << "Longitude-Latitude" << "\x1b[0m\n";
     Knew = cv::Mat::eye(3, 3, CV_64F);
-    Knew.at<double>(0,0) = width_now  / CV_PI;
-    Knew.at<double>(1,1) = height_now / CV_PI;
+    Knew.at<double>(0,0) = size_now  / CV_PI;
+    Knew.at<double>(1,1) = size_now / CV_PI;
     InitRectifyMap(Kl, Dl, Knew, xil.at<double>(0,0),
                    img_size, RECT_LONGLAT, fmap[0], fmap[1]);
     break;
   }
 
-  std::cout << "Width: "  << width_now  << "\t"
-            << "Height: " << height_now << std::endl;
+  std::cout << "Width: "  << size_now  << "\t"
+            << "Height: " << size_now << std::endl;
   std::cout << "K Matrix: \n" << Knew << std::endl << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 int main(int argc, char** argv) {
-  std::string file_name = argc == 2 ? argv[1] : "../astar_calicam_mono.yml";
-  LoadParameters(file_name);
+  std::string param_name = "../astar_calicam_mono.yml";
+  std::string image_name = "../dasl_wood_shop_mono.jpg";
+
+  if (argc == 2) {
+    param_name = argv[1];
+  } else if (argc == 3) {
+    param_name = argv[1];
+    image_name = argv[2];
+  }
+
+  LoadParameters(param_name);
   InitRectifyMap();
 
   cv::Mat raw_img;
@@ -261,7 +260,7 @@ int main(int argc, char** argv) {
     vcapture.set(cv::CAP_PROP_FRAME_HEIGHT, cap_rows);
     vcapture.set(cv::CAP_PROP_FPS, 30);
   } else {
-    raw_img = cv::imread("../dasl_wood_shop_mono.jpg", cv::IMREAD_COLOR);
+    raw_img = cv::imread(image_name, cv::IMREAD_COLOR);
   }
 
   char win_name[256];
@@ -270,8 +269,7 @@ int main(int argc, char** argv) {
   cv::namedWindow(param_win_name);
 
   cv::createTrackbar("V. FoV:  60    +", param_win_name, nullptr,   vfov_max,   OnTrackAngle);
-  cv::createTrackbar("Width:  480 +", param_win_name, nullptr,  width_max,  OnTrackWidth);
-  cv::createTrackbar("Height: 360 +", param_win_name, nullptr, height_max, OnTrackHeight);
+  cv::createTrackbar("Size:  480 +", param_win_name, nullptr,  size_max,  OnTrackSize);
 
   cv::Mat raw_imgl, raw_imgr, rect_imgl, rect_imgr;
   while (1) {
