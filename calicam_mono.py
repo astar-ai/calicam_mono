@@ -251,7 +251,7 @@ def main():
   global changed, mode, mapx, mapy
   
   param_file = "astar_calicam_mono.yml"
-  image_name = "dasl_wood_shop_mono.jpg"
+  image_name = "times_square.jpg"
 
   if len(sys.argv) == 2:
     param_file = sys.argv[1]
@@ -280,7 +280,7 @@ def main():
     raw_imgl = raw_img
     rect_imgl = cv2.remap(raw_imgl, mapx, mapy, cv2.INTER_LINEAR)
     
-    dim = (cap_cols / 2, cap_rows / 2)
+    dim = (int(cap_cols / 2), int(cap_rows / 2))
     small_img = cv2.resize(raw_imgl, dim, interpolation = cv2.INTER_NEAREST)
     
     cv2.imshow(param_win_name, small_img)
