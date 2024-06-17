@@ -16,15 +16,8 @@ mapy = None
 cap_cols = None
 cap_rows = None
 
-vfov_bar =  0
-width_bar = 0
-height_bar = 0
-vfov_max = 60
-width_max = 480
-height_max = 360
-vfov_now = 60
-width_now = 480
-height_now = 360
+vfov_now = 120
+width_now = 640
 
 changed = False
 
@@ -161,90 +154,62 @@ def init_rectify_map():
     print('kRectPerspective')
 
     vfov_rad = vfov_now * math.pi / 180.
-    focal = height_now / 2. / math.tan(vfov_rad / 2.)
+    focal = width_now / 2. / math.tan(vfov_rad / 2.)
     
     Knew = np.identity(3, dtype = np.float64)
     Knew[0, 0] = focal
     Knew[1, 1] = focal
     Knew[0, 2] = width_now / 2 - 0.5
-    Knew[1, 2] = height_now / 2 - 0.5
+    Knew[1, 2] = width_now / 2 - 0.5
 
-    img_size = [height_now, width_now]
+    img_size = [width_now, width_now]
     mapx, mapy = init_undistort_rectify_map(Kl, Dl, Rl, Knew, xil, img_size, 'kRectPerspective')
   
-    print('Width: {}, Height: {}, V.FoV: {}'.format(width_now, height_now, vfov_now))
+    print('Width: {}, Height: {}, V.FoV: {}'.format(width_now, width_now, vfov_now))
     
   if mode == 'kRectLonglat':
     print('kRectLonglat')
 
-    img_length = width_now if width_now > height_now else height_now
     Knew = np.identity(3, dtype = np.float64)
-    Knew[0, 0] = img_length / math.pi
-    Knew[1, 1] = img_length / math.pi
+    Knew[0, 0] = width_now / math.pi
+    Knew[1, 1] = width_now / math.pi
     
-    img_size = [img_length, img_length]
+    img_size = [width_now, width_now]
     mapx, mapy = init_undistort_rectify_map(Kl, Dl, Rl, Knew, xil, img_size, 'kRectLonglat')
 
-    print('Width: {}, Height: {}'.format(img_length, img_length))
+    print('Width: {}, Height: {}'.format(width_now, width_now))
     
   if mode == 'kRectFisheye':
     print('kRectFisheye')
 
-    img_length = width_now if width_now > height_now else height_now
     Knew = np.identity(3, dtype = np.float64)
-    Knew[0, 0] = img_length / 2
-    Knew[1, 1] = img_length / 2
-    Knew[0, 2] = img_length / 2 - 0.5
-    Knew[1, 2] = img_length / 2 - 0.5
+    Knew[0, 0] = width_now / 2
+    Knew[1, 1] = width_now / 2
+    Knew[0, 2] = width_now / 2 - 0.5
+    Knew[1, 2] = width_now / 2 - 0.5
 
-    img_size = [img_length, img_length]
+    img_size = [width_now, width_now]
     mapx, mapy = init_undistort_rectify_map(Kl, Dl, Rl, Knew, xil, img_size, 'kRectFisheye')
 
-    print('Width: {}, Height: {}'.format(img_length, img_length))
+    print('Width: {}, Height: {}'.format(width_now, width_now))
     
   if mode == 'kRectCylindrical':
     print('kRectCylindrical')
 
-    img_length = width_now if width_now > height_now else height_now
     Knew = np.identity(3, dtype = np.float64)
 
-    Knew[0, 0] = img_length / math.pi
-    Knew[1, 1] = img_length / (math.pi - 2 * margin)
+    Knew[0, 0] = width_now / math.pi
+    Knew[1, 1] = width_now / (math.pi - 2 * margin)
     
-    img_size = [img_length, img_length]
+    img_size = [width_now, width_now]
     mapx, mapy = init_undistort_rectify_map(Kl, Dl, Rl, Knew, xil, img_size, 'kRectCylindrical')
 
-    print('Width: {}, Height: {}'.format(img_length, img_length))
+    print('Width: {}, Height: {}'.format(width_now, width_now))
     
   print('K Matrix:')
   print(Knew)
   print('')
   
-#-------------------------------------------------------------------------------#
-
-def OnTrackAngle(vfov_bar):
-  global vfov_now, changed
-  vfov_now = 60 + vfov_bar
-  changed = True
-
-#-------------------------------------------------------------------------------#
-
-def OnTrackWidth(width_bar):
-  global width_now, changed
-  width_now = 480 + width_bar
-  if width_now % 2 == 1:
-    width_now = width_now - 1
-  changed = True
-
-#-------------------------------------------------------------------------------#
-
-def OnTrackHeight(height_bar):
-  global height_now, changed
-  height_now = 360 + height_bar
-  if height_now % 2 == 1:
-    height_now = height_now - 1
-  changed = True
-
 #-------------------------------------------------------------------------------#
 
 def main():  
@@ -268,9 +233,6 @@ def main():
   param_win_name = "Raw Image: " + str(cap_cols) + " x " + str(cap_rows)
   
   cv2.namedWindow(param_win_name)
-  cv2.createTrackbar("V. FoV:  60    +", param_win_name, vfov_bar, vfov_max, OnTrackAngle)
-  cv2.createTrackbar("Width:  480 +", param_win_name, width_bar, width_max, OnTrackWidth)
-  cv2.createTrackbar("Height: 360 +", param_win_name, height_bar, height_max, OnTrackHeight)
  
   while True:
     if changed == True:
