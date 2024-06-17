@@ -13,9 +13,9 @@ bool      live = false;
 //bool      live = true;
 //To run live mode, you need a CaliCam from www.astar.ai
 
-int       vfov_bar =  0, size_bar =   0;
+int       vfov_bar = 60, size_bar =   0;
 int       vfov_max = 60, size_max = 480;
-int       vfov_now = 60, size_now = 480;
+int       vfov_now = 120, size_now = 480;
 
 int       cap_cols, cap_rows;
 bool      changed = false;
@@ -269,6 +269,7 @@ int main(int argc, char** argv) {
   cv::namedWindow(param_win_name);
 
   cv::createTrackbar("V. FoV:  60    +", param_win_name, nullptr,   vfov_max,   OnTrackAngle);
+  cv::setTrackbarPos("V. FoV:  60    +", param_win_name, vfov_bar);
   cv::createTrackbar("Size:  480 +", param_win_name, nullptr,  size_max,  OnTrackSize);
 
   cv::Mat raw_imgl, raw_imgr, rect_imgl, rect_imgr;
