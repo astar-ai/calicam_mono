@@ -40,8 +40,6 @@ Each CaliCam Mono camera has a **UNIQUE** parameter file. Please download the co
 ### 6. Operation
 
 #### 6.1 'Raw Image' window
-There are 3 trackbars to adjust the vertical **FoV**, **width**, and **height** for the output image. **FoV** is only for the perspective image.
-
 #### 6.2 'Rectified Image' window
 Press number button 1~4 to switch the transformation mode.
 
