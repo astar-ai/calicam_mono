@@ -13,9 +13,9 @@ bool      live = false;
 //bool      live = true;
 //To run live mode, you need a CaliCam from www.astar.ai
 
-int       vfov_bar = 60, size_bar =   0;
+int       vfov_bar =  0, size_bar =   0;
 int       vfov_max = 60, size_max = 480;
-int       vfov_now = 120, size_now = 480;
+int       vfov_now = 60, size_now = 480;
 
 int       cap_cols, cap_rows;
 bool      changed = false;
