@@ -234,7 +234,7 @@ void InitRectifyMap() {
 
 int main(int argc, char** argv) {
   std::string param_name = "../astar_calicam_mono.yml";
-  std::string image_name = "../dasl_wood_shop_mono.jpg";
+  std::string image_name = "../times_square.jpg";
 
   if (argc == 2) {
     param_name = argv[1];
