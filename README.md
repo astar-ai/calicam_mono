@@ -1,7 +1,7 @@
 # CaliCam_Mono: Various Fisheye Rectification Modes
 
 <p align="center">
-  <img src="http://astar.support/dotai/calicam_mono.png">
+  <img src="http://astar.support/dotai/calicam_mono_times_square.png">
 </p>
 
 CaliCam_Mono currently supports four rectification modes, these are the perspective, cylindrical, undistorted fisheye and longitude-and-latitude, respectively.
